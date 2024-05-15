@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一、安装部署1.官网下载安装包https:&#x2F;&#x2F;skywalking.apache.org&#x2F;downloads&#x2F; ![image-20230601161536483](&#x2F;Users&#x2F;zhangshiyu&#x2F;Library&#x2F;Application Support&#x2F;typora-user-images&#x2F;image-2023060116153648">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SkyWalking安装部署与集成">
+<meta property="og:url" content="http://example.com/2023/07/03/SkyWalking%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%9B%86%E6%88%90/index.html">
+<meta property="og:site_name" content="CodeGoRound">
+<meta property="og:description" content="一、安装部署1.官网下载安装包https:&#x2F;&#x2F;skywalking.apache.org&#x2F;downloads&#x2F; ![image-20230601161536483](&#x2F;Users&#x2F;zhangshiyu&#x2F;Library&#x2F;Application Support&#x2F;typora-user-images&#x2F;image-2023060116153648">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-07-03T09:04:35.000Z">
+<meta property="article:modified_time" content="2023-07-03T09:22:08.106Z">
+<meta property="article:author" content="Gabriel Zhang">
+<meta property="article:tag" content="golang">
+<meta property="article:tag" content="分布式链路追踪">
+<meta property="article:tag" content="skywalking">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2023/07/03/SkyWalking%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%9B%86%E6%88%90/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>SkyWalking安装部署与集成 | CodeGoRound</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">CodeGoRound</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/07/03/SkyWalking%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%9B%86%E6%88%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Gabriel Zhang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CodeGoRound">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          SkyWalking安装部署与集成
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-07-03 17:04:35 / 修改时间：17:22:08" itemprop="dateCreated datePublished" datetime="2023-07-03T17:04:35+08:00">2023-07-03</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="一、安装部署"><a href="#一、安装部署" class="headerlink" title="一、安装部署"></a>一、安装部署</h3><h4 id="1-官网下载安装包"><a href="#1-官网下载安装包" class="headerlink" title="1.官网下载安装包"></a>1.官网下载安装包</h4><p><a target="_blank" rel="noopener" href="https://skywalking.apache.org/downloads/">https://skywalking.apache.org/downloads/</a></p>
+<p>![image-20230601161536483](&#x2F;Users&#x2F;zhangshiyu&#x2F;Library&#x2F;Application Support&#x2F;typora-user-images&#x2F;image-20230601161536483.png)</p>
+<h4 id="2-下载tar包，解压"><a href="#2-下载tar包，解压" class="headerlink" title="2.下载tar包，解压"></a>2.下载tar包，解压</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -zxvf apache-skywalking-apm-9.4.0.tar.gz</span><br></pre></td></tr></table></figure>
+
+<p>解压后文件目录为</p>
+<p>![image-20230601162235270](&#x2F;Users&#x2F;zhangshiyu&#x2F;Library&#x2F;Application Support&#x2F;typora-user-images&#x2F;image-20230601162235270.png)</p>
+<p><strong>Notice：！！！</strong> skywalking运行依赖java的JDK11及以上版本 如果本机的java版本在11以下 先升级java版本到11以上</p>
+<p>通过以下命令确定java版本</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -version</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-对服务进行配置（可以不配-先run起来）"><a href="#3-对服务进行配置（可以不配-先run起来）" class="headerlink" title="3.对服务进行配置（可以不配 先run起来）"></a>3.对服务进行配置（可以不配 先run起来）</h4><p>进入config目录 找到application.yml</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim application.yml</span><br></pre></td></tr></table></figure>
+
+<p>打开配置文件，找到如下段落</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">...</span></span><br><span class="line"><span class="attr">storage:</span></span><br><span class="line">  <span class="attr">selector:</span> <span class="string">$&#123;SW_STORAGE:h2&#125;</span></span><br><span class="line">  <span class="attr">elasticsearch:</span></span><br><span class="line">    <span class="attr">namespace:</span> <span class="string">$&#123;SW_NAMESPACE:&quot;&quot;&#125;</span></span><br><span class="line">    <span class="attr">clusterNodes:</span> <span class="string">$&#123;SW_STORAGE_ES_CLUSTER_NODES:localhost:9200&#125;</span></span><br><span class="line">    <span class="attr">protocol:</span> <span class="string">$&#123;SW_STORAGE_ES_HTTP_PROTOCOL:&quot;http&quot;&#125;</span></span><br><span class="line">    <span class="attr">connectTimeout:</span> <span class="string">$&#123;SW_STORAGE_ES_CONNECT_TIMEOUT:3000&#125;</span></span><br><span class="line">    <span class="attr">socketTimeout:</span> <span class="string">$&#123;SW_STORAGE_ES_SOCKET_TIMEOUT:30000&#125;</span></span><br><span class="line">    <span class="attr">responseTimeout:</span> <span class="string">$&#123;SW_STORAGE_ES_RESPONSE_TIMEOUT:15000&#125;</span></span><br><span class="line">    <span class="attr">numHttpClientThread:</span> <span class="string">$&#123;SW_STORAGE_ES_NUM_HTTP_CLIENT_THREAD:0&#125;</span></span><br><span class="line">    <span class="attr">user:</span> <span class="string">$&#123;SW_ES_USER:&quot;&quot;&#125;</span></span><br><span class="line">    <span class="attr">password:</span> <span class="string">$&#123;SW_ES_PASSWORD:&quot;&quot;&#125;</span></span><br><span class="line">    <span class="attr">trustStorePath:</span> <span class="string">$&#123;SW_STORAGE_ES_SSL_JKS_PATH:&quot;&quot;&#125;</span></span><br><span class="line">    <span class="attr">trustStorePass:</span> <span class="string">$&#123;SW_STORAGE_ES_SSL_JKS_PASS:&quot;&quot;&#125;</span></span><br><span class="line">    <span class="attr">secretsManagementFile:</span> <span class="string">$&#123;SW_ES_SECRETS_MANAGEMENT_FILE:&quot;&quot;&#125;</span> <span class="comment"># Secrets management file in the properties format includes the username, password, which are managed by 3rd party tool.</span></span><br><span class="line">    <span class="string">......</span></span><br></pre></td></tr></table></figure>
+
+<p>配置文件的形式是${AAAA:BBB}，其中 AAAA是需要配置的环境变量 BBB是默认配置</p>
+<p>可以看到，skywalking默认的存储方式是基于java的轻量级数据库h2（所以不配也可以run起来）</p>
+<p>下面关于elasticsearch的设置 即通过SW_NAMESPACE， SW_STORAGE_ES_CLUSTER_NODES，SW_STORAGE_ES_HTTP_PROTOCOL等环境变量配置</p>
+<p>由于测试环境本机装有es 地址是localhost:9200，所以只需简单配置SW_STORAGE环境变量 使skywalking的存储方式变为ES即可</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export SW_STORAGE=elasticsearch</span><br></pre></td></tr></table></figure>
+
+
+
+<p>配置文件中还有一些skywalking启动的默认配置</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">default:</span></span><br><span class="line">   <span class="comment"># Mixed: Receive agent data, Level 1 aggregate, Level 2 aggregate</span></span><br><span class="line">   <span class="comment"># Receiver: Receive agent data, Level 1 aggregate</span></span><br><span class="line">   <span class="comment"># Aggregator: Level 2 aggregate</span></span><br><span class="line">   <span class="attr">role:</span> <span class="string">$&#123;SW_CORE_ROLE:Mixed&#125;</span> <span class="comment"># Mixed/Receiver/Aggregator</span></span><br><span class="line">   <span class="attr">restHost:</span> <span class="string">$&#123;SW_CORE_REST_HOST:0.0.0.0&#125;</span></span><br><span class="line">   <span class="attr">restPort:</span> <span class="string">$&#123;SW_CORE_REST_PORT:12800&#125;</span></span><br><span class="line">   <span class="attr">restContextPath:</span> <span class="string">$&#123;SW_CORE_REST_CONTEXT_PATH:/&#125;</span></span><br><span class="line">   <span class="attr">restAcceptQueueSize:</span> <span class="string">$&#123;SW_CORE_REST_QUEUE_SIZE:0&#125;</span></span><br><span class="line">   <span class="attr">httpMaxRequestHeaderSize:</span> <span class="string">$&#123;SW_CORE_HTTP_MAX_REQUEST_HEADER_SIZE:8192&#125;</span></span><br><span class="line">   <span class="attr">gRPCHost:</span> <span class="string">$&#123;SW_CORE_GRPC_HOST:0.0.0.0&#125;</span></span><br><span class="line">   <span class="attr">gRPCPort:</span> <span class="string">$&#123;SW_CORE_GRPC_PORT:11800&#125;</span></span><br><span class="line">   <span class="attr">maxConcurrentCallsPerConnection:</span> <span class="string">$&#123;SW_CORE_GRPC_MAX_CONCURRENT_CALL:0&#125;</span></span><br><span class="line">   <span class="attr">maxMessageSize:</span> <span class="string">$&#123;SW_CORE_GRPC_MAX_MESSAGE_SIZE:0&#125;</span></span><br><span class="line">   <span class="attr">gRPCThreadPoolQueueSize:</span> <span class="string">$&#123;SW_CORE_GRPC_POOL_QUEUE_SIZE:-1&#125;</span></span><br><span class="line">   <span class="attr">gRPCThreadPoolSize:</span> <span class="string">$&#123;SW_CORE_GRPC_THREAD_POOL_SIZE:-1&#125;</span></span><br><span class="line">   <span class="attr">gRPCSslEnabled:</span> <span class="string">$&#123;SW_CORE_GRPC_SSL_ENABLED:false</span></span><br><span class="line">   <span class="attr">gRPCSslKeyPath:</span> <span class="string">$&#123;SW_CORE_GRPC_SSL_KEY_PATH:&quot;&quot;&#125;</span></span><br><span class="line">   <span class="attr">gRPCSslCertChainPath:</span> <span class="string">$&#123;SW_CORE_GRPC_SSL_CERT_CHAIN_PATH:&quot;&quot;&#125;</span></span><br><span class="line">   <span class="attr">gRPCSslTrustedCAPath:</span> <span class="string">$&#123;SW_CORE_GRPC_SSL_TRUSTED_CA_PATH:&quot;&quot;&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>如果使用grpc上报方式 关注 SW_CORE_GRPC_HOST和SW_CORE_GRPC_PORT 这是集成的时候的上报地址，如果需要http方式上报则需关注SW_CORE_REST_HOST和SW_CORE_REST_PORT</p>
+<p>同理 在skywalking根目录下有个webapp目录 里面同样有个application.yml 和UI服务相关的配置在里面 容量不大 可以下来自行关注一下</p>
+<h4 id="4-启动apm服务-amp-UI界面"><a href="#4-启动apm服务-amp-UI界面" class="headerlink" title="4.启动apm服务&amp;UI界面"></a>4.启动apm服务&amp;UI界面</h4><p>接下来进入 bin目录，执行启动命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sh oapService.sh #启动apm服务</span><br><span class="line">sh webappService.sh #启动UI界面</span><br></pre></td></tr></table></figure>
+
+<p>下一步进入根目录下log文件 关注apm服务端和webapp有无启动错误日志，如果正常 那么恭喜你安装成功</p>
+<p>在浏览器打开<a target="_blank" rel="noopener" href="http://localhost:8080/%E5%B0%B1%E5%8F%AF%E4%BB%A5%E7%9C%8B%E5%88%B0skywalking%E7%9A%84UI%E7%95%8C%E9%9D%A2">http://localhost:8080/就可以看到skywalking的UI界面</a></p>
+<p>![image-20230601170917386](&#x2F;Users&#x2F;zhangshiyu&#x2F;Library&#x2F;Application Support&#x2F;typora-user-images&#x2F;image-20230601170917386.png)</p>
+<h3 id="二、服务端接入（go-kit为例）"><a href="#二、服务端接入（go-kit为例）" class="headerlink" title="二、服务端接入（go-kit为例）"></a>二、服务端接入（go-kit为例）</h3><h4 id="1-名词解释"><a href="#1-名词解释" class="headerlink" title="1.名词解释"></a>1.名词解释</h4><h5 id="1-span"><a href="#1-span" class="headerlink" title="1.span"></a>1.span</h5><p>各业务端在进行链路追踪的时候可以创建span 这样在UI界面上就会显示由一组或者多组span组成的span树 用来监控一条链路的行为</p>
+<p>在skywalking中 业务端可以创建的span主要有三种：</p>
+<ul>
+<li>EntrySpan</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t *Tracer)</span></span> CreateEntrySpan(ctx context.Context, operationName <span class="type">string</span>, extractor propagation.Extractor) (s Span, nCtx context.Context, err <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+
+<p>使用这个方法 创建的是 Entry Span，代表的是入站操作，也就是服务接收到的请求。比如说，一个 HTTP 请求到达你的服务，并开始处理这个请求，那么就应该在这时创建一个 Entry Span。</p>
+<ul>
+<li>LocalSpan</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/golang/" rel="tag"># golang</a>
+              <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA/" rel="tag"># 分布式链路追踪</a>
+              <a href="/tags/skywalking/" rel="tag"># skywalking</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/06/28/ubuntu%E9%83%A8%E7%BD%B2%E5%8D%95%E8%8A%82%E7%82%B9Kubernetes1.27/" rel="prev" title="ubuntu部署单节点Kubernetes1.27">
+      <i class="fa fa-chevron-left"></i> ubuntu部署单节点Kubernetes1.27
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/07/03/GMP/" rel="next" title="Golang GMP调度器">
+      Golang GMP调度器 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2"><span class="nav-number">1.</span> <span class="nav-text">一、安装部署</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E5%AE%98%E7%BD%91%E4%B8%8B%E8%BD%BD%E5%AE%89%E8%A3%85%E5%8C%85"><span class="nav-number">1.1.</span> <span class="nav-text">1.官网下载安装包</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E4%B8%8B%E8%BD%BDtar%E5%8C%85%EF%BC%8C%E8%A7%A3%E5%8E%8B"><span class="nav-number">1.2.</span> <span class="nav-text">2.下载tar包，解压</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E5%AF%B9%E6%9C%8D%E5%8A%A1%E8%BF%9B%E8%A1%8C%E9%85%8D%E7%BD%AE%EF%BC%88%E5%8F%AF%E4%BB%A5%E4%B8%8D%E9%85%8D-%E5%85%88run%E8%B5%B7%E6%9D%A5%EF%BC%89"><span class="nav-number">1.3.</span> <span class="nav-text">3.对服务进行配置（可以不配 先run起来）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-%E5%90%AF%E5%8A%A8apm%E6%9C%8D%E5%8A%A1-amp-UI%E7%95%8C%E9%9D%A2"><span class="nav-number">1.4.</span> <span class="nav-text">4.启动apm服务&amp;UI界面</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%8E%A5%E5%85%A5%EF%BC%88go-kit%E4%B8%BA%E4%BE%8B%EF%BC%89"><span class="nav-number">2.</span> <span class="nav-text">二、服务端接入（go-kit为例）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E5%90%8D%E8%AF%8D%E8%A7%A3%E9%87%8A"><span class="nav-number">2.1.</span> <span class="nav-text">1.名词解释</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-span"><span class="nav-number">2.1.1.</span> <span class="nav-text">1.span</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Gabriel Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Gabriel Zhang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
